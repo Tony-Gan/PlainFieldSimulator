@@ -8,6 +8,8 @@ using PlainFieldSimulator.Exceptions;
 using PlainFieldSimulator.Occupations;
 using PlainFieldSimulator.Abilities;
 using PlainFieldSimulator.Missions;
+using UnityEngine.Animations;
+using Unity.VisualScripting;
 
 namespace PlainFieldSimulator.Units
 {
@@ -47,7 +49,7 @@ namespace PlainFieldSimulator.Units
         private List<Item> inventory = new();
 
         // 位置
-        private Position position = new Position(-1, -1);
+        private Position position = new(-1, -1);
 
         // 技能修正 - 七维加成及其他修正率
         // 攻击加值，防御加值，物防加值，魔防加值，敏捷加值，技术加值，移动加值
@@ -1015,7 +1017,7 @@ namespace PlainFieldSimulator.Units
     }
 
     // 表示棋盘中的一个位置
-    public struct Position
+    public readonly struct Position
     {
         public Position(int x, int y)
         {
@@ -1023,9 +1025,14 @@ namespace PlainFieldSimulator.Units
             Y = y;
         }
 
+        public Position(Position p)
+        {
+            X = p.X; 
+            Y = p.Y;
+        }
+
         public int X { get; }
         public int Y { get; }
-
         public override string ToString() => $"({X}, {Y})";
     }
 }

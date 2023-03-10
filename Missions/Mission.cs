@@ -152,8 +152,8 @@ namespace PlainFieldSimulator.Missions
         // 移除某位置上的单位
         public void RemoveUnit(Position p)
         {
-            int x = p.X;
-            int y = p.Y;
+            _ = p.X;
+            _ = p.Y;
             Unit? unit = GetUnit(p);
             if (unit != null)
             {
@@ -182,7 +182,7 @@ namespace PlainFieldSimulator.Missions
             {
                 throw new UnitNotFound($"{unit.Name} not found in the map.");
             }
-            List<Position> availableMovement = BattleAlgorithms.AvailableMovement(this, unit, p);
+            List<Position> availableMovement = BattleAlgorithms.AvailableMovement(this, unit);
             if (availableMovement.Contains(p))
             {
                 RemoveUnit(originPos);
@@ -201,7 +201,7 @@ namespace PlainFieldSimulator.Missions
             {
                 throw new UnitNotFound($"{unit.Name} not found in the map.");
             }
-            return BattleAlgorithms.AvailableAttack(this, unit, p);
+            return BattleAlgorithms.AvailableAttack(this, unit);
         }
 
         // 进行攻击

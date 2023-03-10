@@ -363,10 +363,11 @@ namespace PlainFieldSimulator.Algorithms
         }
 
         // 计算可移动的坐标
-        public static List<Position> AvailableMovement(Mission mission, Unit u, Position p)
+        public static List<Position> AvailableMovement(Mission mission, Unit u)
         {
             List<Position> res = new();
             MapGenerator map = mission.Map;
+            Position p = u.Position;
 
             int move = u.GetCurrMove() + Convert.ToInt32(mission.GetCurrWeather().GetMoveFix());
 
@@ -428,9 +429,22 @@ namespace PlainFieldSimulator.Algorithms
         }
 
         // 计算位于攻击范围内的坐标
-        public static List<Position> AvailableAttack (Mission mission, Unit u, Position p) 
+        public static List<Position> AvailableAttack (Mission mission, Unit u) 
         {
             List< Position> res = new();
+            MapGenerator map = mission.Map;
+            Position p = u.Position;
+
+            int rangeLeft = u.GetAttackRange(1);
+
+            RecursiveRangeSearch(map, p, res, rangeLeft);
+            return res;
+        }
+
+        // 也是计算位于攻击范围内的目标，但起始点不是unit本身
+        public static List<Position> AvailableAttack(Mission mission, Unit u, Position p)
+        {
+            List<Position> res = new();
             MapGenerator map = mission.Map;
 
             int rangeLeft = u.GetAttackRange(1);
@@ -478,6 +492,10 @@ namespace PlainFieldSimulator.Algorithms
         {
             foreach (Unit unit in enemyGroup)
             {
+                if (unit.GetCurrHp() == 0 || !mission.IsActivated[unit.TriggerLabel])
+                {
+                    continue;
+                }
                 Random dice = new();
                 double[] tendency = unit.CalculateNPCTendency();
                 if (dice.NextDouble() <= tendency[0])
@@ -494,12 +512,8 @@ namespace PlainFieldSimulator.Algorithms
         // NPC进行攻击行动
         private static void ImplementNPCAttack(Mission mission, Unit unit)
         {
-            if (unit.GetCurrHp() == 0 || !mission.IsActivated[unit.TriggerLabel])
-            {
-                return;
-            }
             // 获取当前移动范围
-            List<Position> availableMovement = AvailableMovement(mission, unit, unit.Position);
+            List<Position> availableMovement = AvailableMovement(mission, unit);
             // 获取所有攻击范围
             List<Position> attackablePosition = new();
             foreach (Position pos in availableMovement)
@@ -561,8 +575,8 @@ namespace PlainFieldSimulator.Algorithms
                     }
                 }
 
-                List<Position> shortestPath = FindShortestPathToUnreachableUnit(unit, targetUnit);
-                mission.MoveUnit(unit, shortestPath[^1]);
+                Position shortestPath = FindShortestPathToUnreachableUnit(unit, targetUnit, mission);
+                mission.MoveUnit(unit, shortestPath);
             }
             // 当攻击范围内有目标时
             else
@@ -601,8 +615,8 @@ namespace PlainFieldSimulator.Algorithms
                         }
                     }
                 }
-                List<Position> shortestPath = FindShortestPathToReachableUnit(unit, targetUnit);
-                mission.MoveUnit(unit, shortestPath[^1]);
+                Position shortestPath = FindShortestPathToReachableUnit(unit, targetUnit, mission);
+                mission.MoveUnit(unit, shortestPath);
                 mission.Attack(unit, targetUnit);
             }
         }
@@ -610,12 +624,8 @@ namespace PlainFieldSimulator.Algorithms
         // NPC进行撤退行动
         private static void ImplementNPCRetreat(Mission mission, Unit unit)
         {
-            if (unit.GetCurrHp() == 0 || !mission.IsActivated[unit.TriggerLabel])
-            {
-                return;
-            }
             // 获取当前移动范围
-            List<Position> availableMovement = AvailableMovement(mission, unit, unit.Position);
+            List<Position> availableMovement = AvailableMovement(mission, unit);
 
             // 获取最近的至多三个敌人的距离
             List<Unit> nearestThreeUnits = new();
@@ -655,29 +665,71 @@ namespace PlainFieldSimulator.Algorithms
         // 进攻得分分析，得分越高，NPC攻击该单位的倾向越强，进攻分析中会自动换武器
         private static int EnemiesTargetAnalysis(Unit u1, Unit u2)
         {
+            // 对方武器影响
+
+            // 对方防具影响
+
+            // 武器克制影响
+
+            // 命中率、暴击率、伤害、是否能击败、对方剩余血量影响
+
+            // 等级差影响
+
+            // 职业等级影响
+
+            // 距离影响
+
+            // 随机微调
             return 0;
         }
 
         // 治疗得分分析，得分越高，NPC治疗该单位的倾向越强，治疗分析中会自动换武器
         private static int AlliesTargetAnalysis(Unit u1, Unit u2)
         {
+            // 剩余血量影响
+
+            // 武器类型影响
+
+            // 防具影响
             return 0;
         }
 
-        // 寻找一条通向一个不可及目标的最近道路，终点为距离目标所需移动力最低的点
-        private static List<Position> FindShortestPathToReachableUnit(Unit u1, Unit u2)
+        // 我写不动了，如果目标不可及，会找能够移动的范围内绝对距离最短的点，终点为距离目标所需移动力最低的点
+        private static Position FindShortestPathToReachableUnit(Unit u1, Unit u2, Mission mission)
         {
-            List<Position> res = new();
+            Position targetNode = u2.Position;
 
-            return res;
+            List<Position> availableMovements = AvailableMovement(mission, u1);
+            Position p = new(-1, -1);
+            int shortestPath = Int16.MaxValue;
+            foreach (Position pos in availableMovements)
+            {
+                int path = Mission.CalculateDistanceBetweenPositions(targetNode, pos);
+                if (path < shortestPath)
+                {
+                    shortestPath = path;
+                    p = pos;
+                }
+            }
+
+            return p;
         }
 
-        // 寻找一条通向一个可及目标的最近道路，终点为可能的最远攻击点
-        private static List<Position> FindShortestPathToUnreachableUnit(Unit u1, Unit u2)
+        // 同上，累了，先实现再说
+        private static Position FindShortestPathToUnreachableUnit(Unit u1, Unit u2, Mission mission)
         {
-            List<Position> res = new();
+            Position targetNode = u2.Position;
+            List<Position> availableMovements = AvailableMovement(mission, u1);
+            int attackRange = u1.GetAttackRange(1);
 
-            return res;
+            foreach (Position pos in availableMovements)
+            {
+                if (Mission.CalculateDistanceBetweenPositions(targetNode, pos) == attackRange)
+                {
+                    return pos;
+                }
+            }
+            return new Position(-1, -1);
         }
     }
 }
