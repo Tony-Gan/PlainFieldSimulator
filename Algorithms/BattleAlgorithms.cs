@@ -5,6 +5,7 @@ using PlainFieldSimulator.Equipments.Accessories;
 using PlainFieldSimulator.Equipments.Armors;
 using PlainFieldSimulator.Equipments.Weapons;
 using PlainFieldSimulator.Missions;
+using PlainFieldSimulator.Occupations;
 using PlainFieldSimulator.Units;
 
 namespace PlainFieldSimulator.Algorithms
@@ -51,61 +52,24 @@ namespace PlainFieldSimulator.Algorithms
                 { "criticalRate", 1 },
                 { "criticalDmgRate", 1 },
             };
-            bool[] relationS1 =
-            {
-                atkWeapon.WeaponType == "Sword" && defWeapon.WeaponType == "Axe",
-                atkWeapon.WeaponType == "Axe" && defWeapon.WeaponType == "Spike",
-                atkWeapon.WeaponType == "Spike" && defWeapon.WeaponType == "Sword",
-                atkWeapon.WeaponType == "Claw" && defWeapon.WeaponType == "Knife",
-                atkWeapon.WeaponType == "Knife" && defWeapon.WeaponType == "Claw",
-            };
-            bool[] relationS2 =
-            {
-                atkWeapon.WeaponType == "Knife" && defWeapon.WeaponType == "Bow" && atkWeapon.Range == 1 && defWeapon.Range != 1,
-                atkWeapon.WeaponType == "Knife" && defWeapon.WeaponType == "Crossbow" && atkWeapon.Range == 1 && defWeapon.Range != 1,
-                atkWeapon.WeaponType == "Knife" && defWeapon.WeaponType == "Stave",
-                atkWeapon.WeaponType == "Knife" && defWeapon.WeaponType == "Tome" && atkWeapon.Range == 1 && defWeapon.Range != 1,
-                atkWeapon.WeaponType == "Knife" && defWeapon.WeaponType == "Spell" && atkWeapon.Range == 1 && defWeapon.Range != 1,
-                atkWeapon.WeaponType == "Claw" && defWeapon.WeaponType == "Bow" && atkWeapon.Range == 1 && defWeapon.Range != 1,
-                atkWeapon.WeaponType == "Claw" && defWeapon.WeaponType == "Crossbow" && atkWeapon.Range == 1 && defWeapon.Range != 1,
-                atkWeapon.WeaponType == "Claw" && defWeapon.WeaponType == "Stave",
-                atkWeapon.WeaponType == "Claw" && defWeapon.WeaponType == "Tome" && atkWeapon.Range == 1 && defWeapon.Range != 1,
-                atkWeapon.WeaponType == "Claw" && defWeapon.WeaponType == "Spell" && atkWeapon.Range == 1 && defWeapon.Range != 1,
-            };
-            bool[] relationS3 =
-            {
-                atkWeapon.WeaponType == "Sword" && defWeapon.WeaponType == "Stave",
-                atkWeapon.WeaponType == "Axe" && defWeapon.WeaponType == "Stave",
-                atkWeapon.WeaponType == "Spike" && defWeapon.WeaponType == "Stave",
-            };
-            bool[] relationS4 =
-            {
-                defWeapon.WeaponType == "NoWeapon",
-            };
-            bool[] relationS8 =
-            {
-                atkWeapon.WeaponType == "Spell" && defWeapon.WeaponType == "Stave",
-                atkWeapon.WeaponType == "Spell" && defWeapon.WeaponType == "Tome",
-                atkWeapon.WeaponType == "Spell" && defWeapon.WeaponType == "Bow",
-                atkWeapon.WeaponType == "Spell" && defWeapon.WeaponType == "Crossbow",
-            };
-            if (Array.IndexOf(relationS1, true) > -1)
+            List<bool[]> r1 = GetWeaponRelationship(atkWeapon, defWeapon);
+            if (Array.IndexOf(r1[0], true) > -1)
             {
                 weaponRelation["atk/satk"] = 1.2;
                 weaponRelation["accuracy"] = 1.2;
-            } else if (Array.IndexOf(relationS2, true) > -1)
+            } else if (Array.IndexOf(r1[1], true) > -1)
             {
                 weaponRelation["atk/satk"] = 1.1;
                 weaponRelation["criticalRate"] = 1.1;
                 weaponRelation["criticalDmgRate"] = 1.1;
-            } else if (Array.IndexOf(relationS3, true) > -1)
+            } else if (Array.IndexOf(r1[2], true) > -1)
             {
                 weaponRelation["atk/satk"] = 1.2;
                 weaponRelation["criticalRate"] = 1.2;
-            } else if (Array.IndexOf(relationS4, true) > -1)
+            } else if (Array.IndexOf(r1[3], true) > -1)
             {
                 weaponRelation["atk/satk"] = 2;
-            } else if (Array.IndexOf(relationS8, true) > -1)
+            } else if (Array.IndexOf(r1[4], true) > -1)
             {
                 weaponRelation["accuracy"] = 1.5;
                 weaponRelation["criticalDmgRate"] = 1.5;
@@ -119,21 +83,13 @@ namespace PlainFieldSimulator.Algorithms
                 { "criticalRate", 1 },
                 { "criticalDmgRate", 1 },
             };
-            bool[] relationS5 =
-            {
-                atkWeapon.WeaponType == "Bow" && defender.Occupation.IsFlying,
-                atkWeapon.WeaponType == "Crossbow" && defender.Occupation.IsFlying,
-            };
-            bool[] relationS6 =
-            {
-                atkWeapon.WeaponType == "Spike" && defender.Occupation.IsRiding,
-            };
-            if (Array.IndexOf(relationS5, true) > -1)
+            List<bool[]> r2 = GetWeaponOccupationRelationship(atkWeapon, defender.Occupation);
+            if (Array.IndexOf(r2[0], true) > -1)
             {
                 occupationRelation["atk/satk"] = 1.5;
                 occupationRelation["accuracy"] = 1.1;
                 occupationRelation["criticalRate"] = 1.2;
-            } else if (Array.IndexOf(relationS6, true) > -1) 
+            } else if (Array.IndexOf(r2[1], true) > -1) 
             {
                 occupationRelation["atk"] = 1.5;
                 occupationRelation["criticalRate"] = 1.5;
@@ -254,6 +210,16 @@ namespace PlainFieldSimulator.Algorithms
             {
                 basicDmg = finalAtk * atkWeapon.HealingRate * attackSkillsFix["healingRate"] + attackSkillsFix["healingAddOn"];
                 criticalDmg = finalAtk * atkWeapon.CriticalDmg * atkWeapon.HealingRate * attackSkillsFix["healingRate"] + attackSkillsFix["healingAddOn"];
+            }
+
+            if (basicDmg < 0)
+            {
+                basicDmg = 0;
+                criticalDmg /= 2;
+            }
+            if (criticalDmg < 0)
+            {
+                criticalDmg = 0;
             }
 
             // 等级差最终补正
@@ -378,6 +344,10 @@ namespace PlainFieldSimulator.Algorithms
         private static void RecursiveMoveSearch(MapGenerator map, Position p, List<Position> res, int move, bool isFlying, bool isRiding)
         {
             Cell cell = map.GetCell(p);
+            if (cell.Unit != null)
+            {
+                return;
+            }
             if ((cell.IsReachableForFly && isFlying) || cell.IsReachableForAll)
             {
                 if (isFlying)
@@ -487,249 +457,63 @@ namespace PlainFieldSimulator.Algorithms
             }
         }
 
-        // NPC行动
-        public static void ImplementNPCMovement(Mission mission, List<Unit> enemyGroup)
+        public static List<bool[]> GetWeaponRelationship(Weapon atkWeapon, Weapon defWeapon)
         {
-            foreach (Unit unit in enemyGroup)
+            bool[] relationS1 =
+{
+                atkWeapon.WeaponType == "Sword" && defWeapon.WeaponType == "Axe",
+                atkWeapon.WeaponType == "Axe" && defWeapon.WeaponType == "Spike",
+                atkWeapon.WeaponType == "Spike" && defWeapon.WeaponType == "Sword",
+                atkWeapon.WeaponType == "Claw" && defWeapon.WeaponType == "Knife",
+                atkWeapon.WeaponType == "Knife" && defWeapon.WeaponType == "Claw",
+            };
+            bool[] relationS2 =
             {
-                if (unit.GetCurrHp() == 0 || !mission.IsActivated[unit.TriggerLabel])
-                {
-                    continue;
-                }
-                Random dice = new();
-                double[] tendency = unit.CalculateNPCTendency();
-                if (dice.NextDouble() <= tendency[0])
-                {
-                    ImplementNPCAttack(mission, unit);
-                }
-                else
-                {
-                    ImplementNPCRetreat(mission, unit);
-                }
-            }
+                atkWeapon.WeaponType == "Knife" && defWeapon.WeaponType == "Bow" && atkWeapon.Range == 1 && defWeapon.Range != 1,
+                atkWeapon.WeaponType == "Knife" && defWeapon.WeaponType == "Crossbow" && atkWeapon.Range == 1 && defWeapon.Range != 1,
+                atkWeapon.WeaponType == "Knife" && defWeapon.WeaponType == "Stave",
+                atkWeapon.WeaponType == "Knife" && defWeapon.WeaponType == "Tome" && atkWeapon.Range == 1 && defWeapon.Range != 1,
+                atkWeapon.WeaponType == "Knife" && defWeapon.WeaponType == "Spell" && atkWeapon.Range == 1 && defWeapon.Range != 1,
+                atkWeapon.WeaponType == "Claw" && defWeapon.WeaponType == "Bow" && atkWeapon.Range == 1 && defWeapon.Range != 1,
+                atkWeapon.WeaponType == "Claw" && defWeapon.WeaponType == "Crossbow" && atkWeapon.Range == 1 && defWeapon.Range != 1,
+                atkWeapon.WeaponType == "Claw" && defWeapon.WeaponType == "Stave",
+                atkWeapon.WeaponType == "Claw" && defWeapon.WeaponType == "Tome" && atkWeapon.Range == 1 && defWeapon.Range != 1,
+                atkWeapon.WeaponType == "Claw" && defWeapon.WeaponType == "Spell" && atkWeapon.Range == 1 && defWeapon.Range != 1,
+            };
+            bool[] relationS3 =
+            {
+                atkWeapon.WeaponType == "Sword" && defWeapon.WeaponType == "Stave",
+                atkWeapon.WeaponType == "Axe" && defWeapon.WeaponType == "Stave",
+                atkWeapon.WeaponType == "Spike" && defWeapon.WeaponType == "Stave",
+            };
+            bool[] relationS4 =
+            {
+                defWeapon.WeaponType == "NoWeapon",
+            };
+            bool[] relationS5 =
+            {
+                atkWeapon.WeaponType == "Spell" && defWeapon.WeaponType == "Stave",
+                atkWeapon.WeaponType == "Spell" && defWeapon.WeaponType == "Tome",
+                atkWeapon.WeaponType == "Spell" && defWeapon.WeaponType == "Bow",
+                atkWeapon.WeaponType == "Spell" && defWeapon.WeaponType == "Crossbow",
+            };
+
+            return new List<bool[]> { relationS1, relationS2, relationS3, relationS4, relationS5 };
         }
 
-        // NPC进行攻击行动
-        private static void ImplementNPCAttack(Mission mission, Unit unit)
+        public static List<bool[]> GetWeaponOccupationRelationship(Weapon atkWeapon, Occupation defOccupation)
         {
-            // 获取当前移动范围
-            List<Position> availableMovement = AvailableMovement(mission, unit);
-            // 获取所有攻击范围
-            List<Position> attackablePosition = new();
-            foreach (Position pos in availableMovement)
+            bool[] relationS1 =
+{
+                atkWeapon.WeaponType == "Bow" && defOccupation.IsFlying,
+                atkWeapon.WeaponType == "Crossbow" && defOccupation.IsFlying,
+            };
+            bool[] relationS2 =
             {
-                attackablePosition.AddRange(AvailableAttack(mission, unit, pos));
-            }
-            // 获取所有可攻击对象
-            List<Unit> attackableUnits = new();
-            foreach (Position pos in attackablePosition)
-            {
-                if (mission.Map.GetCell(pos).Unit != null)
-                {
-                    attackableUnits.Add(unit);
-                }
-            }
+                atkWeapon.WeaponType == "Spike" && defOccupation.IsRiding,
+            };
 
-            // 当攻击范围内没有任意目标时
-            if (attackableUnits.Count == 0)
-            {
-                // 寻找最近目标
-                int minDistanceToEnemy = Int16.MaxValue;
-                List<Unit> nearestEnemies = new();
-                foreach (Unit u in mission.AllUnits)
-                {
-                    if (u.Camp != unit.Camp)
-                    {
-                        int dist = Mission.CalculateDistanceBetweenPositions(unit.Position, u.Position);
-                        if (minDistanceToEnemy < dist)
-                        {
-                            minDistanceToEnemy = dist;
-                        }
-                    }
-                }
-                foreach (Unit u in mission.AllUnits)
-                {
-                    if (u.Camp != unit.Camp)
-                    {
-                        if (Mission.CalculateDistanceBetweenPositions(unit.Position, u.Position) == minDistanceToEnemy)
-                        {
-                            nearestEnemies.Add(u);
-                        }
-                    }
-                }
-                if (nearestEnemies.Count == 0)
-                {
-                    return;
-                }
-
-                // 进行目标分析，选择目标
-                int targetScore = 0;
-                Unit targetUnit = unit;
-                foreach (Unit u in nearestEnemies)
-                {
-                    int score = EnemiesTargetAnalysis(unit, u);
-                    if (score > targetScore)
-                    {
-                        targetScore = score;
-                        targetUnit = u;
-                    }
-                }
-
-                Position shortestPath = FindShortestPathToUnreachableUnit(unit, targetUnit, mission);
-                mission.MoveUnit(unit, shortestPath);
-            }
-            // 当攻击范围内有目标时
-            else
-            {
-                int targetScore = 0;
-                Unit targetUnit = unit;
-                // 回复类武器
-                if (unit.Weapon.Type == 3)
-                {
-                    foreach (Unit u in attackableUnits)
-                    {
-                        if (unit.Camp == u.Camp)
-                        {
-                            int score = AlliesTargetAnalysis(unit, u);
-                            if (score > targetScore)
-                            {
-                                targetScore = score;
-                                targetUnit = u;
-                            }
-                        }
-                    }
-                }
-                // 非回复类武器
-                else
-                {
-                    foreach (Unit u in attackableUnits)
-                    {
-                        if (unit.Camp != u.Camp)
-                        {
-                            int score = EnemiesTargetAnalysis(unit, u);
-                            if (score > targetScore)
-                            {
-                                targetScore = score;
-                                targetUnit = u;
-                            }
-                        }
-                    }
-                }
-                Position shortestPath = FindShortestPathToReachableUnit(unit, targetUnit, mission);
-                mission.MoveUnit(unit, shortestPath);
-                mission.Attack(unit, targetUnit);
-            }
-        }
-
-        // NPC进行撤退行动
-        private static void ImplementNPCRetreat(Mission mission, Unit unit)
-        {
-            // 获取当前移动范围
-            List<Position> availableMovement = AvailableMovement(mission, unit);
-
-            // 获取最近的至多三个敌人的距离
-            List<Unit> nearestThreeUnits = new();
-            foreach (Unit u in mission.AllUnits)
-            {
-                if (u.GetCurrHp() != 0 && u.Camp != unit.Camp)
-                {
-                    if (nearestThreeUnits.Count < 3)
-                    {
-                        nearestThreeUnits.Add(u);
-                    }
-                    else
-                    {
-                        nearestThreeUnits.Sort();
-                        nearestThreeUnits[2] = u;
-                    }
-                }
-            }
-
-            // 寻找可能的最远距离
-            int longestDistance = 0;
-            Position p = unit.Position;
-            foreach (Position pos in availableMovement)
-            {
-                int dist = Mission.CalculateDistanceBetweenPositions(unit.Position, pos);
-                if (dist > longestDistance)
-                {
-                    longestDistance = dist;
-                    p = pos;
-                }
-            }
-
-            // 润了
-            mission.MoveUnit(unit, p);
-        }
-
-        // 进攻得分分析，得分越高，NPC攻击该单位的倾向越强，进攻分析中会自动换武器
-        private static int EnemiesTargetAnalysis(Unit u1, Unit u2)
-        {
-            // 对方武器影响
-
-            // 对方防具影响
-
-            // 武器克制影响
-
-            // 命中率、暴击率、伤害、是否能击败、对方剩余血量影响
-
-            // 等级差影响
-
-            // 职业等级影响
-
-            // 距离影响
-
-            // 随机微调
-            return 0;
-        }
-
-        // 治疗得分分析，得分越高，NPC治疗该单位的倾向越强，治疗分析中会自动换武器
-        private static int AlliesTargetAnalysis(Unit u1, Unit u2)
-        {
-            // 剩余血量影响
-
-            // 武器类型影响
-
-            // 防具影响
-            return 0;
-        }
-
-        // 我写不动了，如果目标不可及，会找能够移动的范围内绝对距离最短的点，终点为距离目标所需移动力最低的点
-        private static Position FindShortestPathToReachableUnit(Unit u1, Unit u2, Mission mission)
-        {
-            Position targetNode = u2.Position;
-
-            List<Position> availableMovements = AvailableMovement(mission, u1);
-            Position p = new(-1, -1);
-            int shortestPath = Int16.MaxValue;
-            foreach (Position pos in availableMovements)
-            {
-                int path = Mission.CalculateDistanceBetweenPositions(targetNode, pos);
-                if (path < shortestPath)
-                {
-                    shortestPath = path;
-                    p = pos;
-                }
-            }
-
-            return p;
-        }
-
-        // 同上，累了，先实现再说
-        private static Position FindShortestPathToUnreachableUnit(Unit u1, Unit u2, Mission mission)
-        {
-            Position targetNode = u2.Position;
-            List<Position> availableMovements = AvailableMovement(mission, u1);
-            int attackRange = u1.GetAttackRange(1);
-
-            foreach (Position pos in availableMovements)
-            {
-                if (Mission.CalculateDistanceBetweenPositions(targetNode, pos) == attackRange)
-                {
-                    return pos;
-                }
-            }
-            return new Position(-1, -1);
+            return new List<bool[]> { relationS1, relationS2 };
         }
     }
 }

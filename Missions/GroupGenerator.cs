@@ -208,7 +208,7 @@ namespace PlainFieldSimulator.Missions
 
     public class MainCharacterGroupGenerator
     {
-        public static Unit GenerateMainCharacter(string name, int gender)
+        public static Unit GenerateMainCharacter()
         {
             Dictionary<string, int> attrs = new()
             {
@@ -233,7 +233,7 @@ namespace PlainFieldSimulator.Missions
                 { "dex", 0.21 },
                 { "tech", 0.23 }
             };
-            Unit unit = new(name, gender, 1, attrs, growth, new FighterApprentice());
+            Unit unit = new("Leo", 1, 1, attrs, growth, new FighterApprentice());
             unit.AddWeapon(new IronSword());
             unit.Armor = new TrainingLightArmor();
             unit.MultiLevelUp(4);
@@ -306,6 +306,17 @@ namespace PlainFieldSimulator.Missions
             unit.Armor = new TrainingMediumArmor();
             unit.AddWeapon(new IronAxe());
             unit.AddAbility(new Tough());
+
+            return unit;
+        }
+
+        public static Unit GenerateJohnCharacter()
+        {
+            Dictionary<string, int> attrs = AttrsGrowthModels.GetLevel1GeneralVilAttr();
+            Dictionary<string, double> growth = AttrsGrowthModels.GetLevel1GeneralVilGrowth();
+            Unit unit = new("John", 1, 1, attrs, growth, new Villager());
+            unit.Armor = new TrainingLeatherArmor();
+            unit.AddWeapon(new IronSpike());
 
             return unit;
         }

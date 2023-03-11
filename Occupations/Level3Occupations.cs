@@ -435,7 +435,8 @@ namespace PlainFieldSimulator.Occupations
                 {
                     "Shadow Servent",
                     "Shapeless",
-                    "Breaker"
+                    "Breaker",
+                    "Martial Master"
                 },
                 new List<string>
                 {

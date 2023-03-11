@@ -285,7 +285,7 @@ namespace PlainFieldSimulator.Missions
             // 友方阵营
             FirstCampUnits = new()
             {
-                MainCharacterGroupGenerator.GenerateMainCharacter("Reilly", 1),
+                MainCharacterGroupGenerator.GenerateMainCharacter(),
                 MainCharacterGroupGenerator.GenerateAlissaCharacter(),
                 MainCharacterGroupGenerator.GenerateCloudCharacter(),
             };
@@ -307,20 +307,20 @@ namespace PlainFieldSimulator.Missions
             Map = new Mission1Board();
 
             // 放置单位
-            PutUnit(new Position(3,9), SecondCampUnits[0]);
-            PutUnit(new Position(2, 11), SecondCampUnits[1]);
-            PutUnit(new Position(3, 13), SecondCampUnits[2]);
-            PutUnit(new Position(10, 3), ThirdCampUnits[0]);
-            PutUnit(new Position(11, 2), ThirdCampUnits[1]);
-            PutUnit(new Position(12, 2), ThirdCampUnits[2]);
-            PutUnit(new Position(13, 3), ThirdCampUnits[3]);
-            PutUnit(new Position(10, 20), FourthCampUnits[0]);
-            PutUnit(new Position(11, 21), FourthCampUnits[1]);
-            PutUnit(new Position(12, 21), FourthCampUnits[2]);
-            PutUnit(new Position(13, 20), FourthCampUnits[3]);
-            PutUnit(new Position(20, 9), FirstCampUnits[1]);
-            PutUnit(new Position(21, 11), FirstCampUnits[0]);
-            PutUnit(new Position(20, 13), FirstCampUnits[2]);
+            PutUnit(new Position(4,9), SecondCampUnits[0]);
+            PutUnit(new Position(3, 11), SecondCampUnits[1]);
+            PutUnit(new Position(4, 13), SecondCampUnits[2]);
+            PutUnit(new Position(10, 4), ThirdCampUnits[0]);
+            PutUnit(new Position(11, 3), ThirdCampUnits[1]);
+            PutUnit(new Position(12, 3), ThirdCampUnits[2]);
+            PutUnit(new Position(13, 4), ThirdCampUnits[3]);
+            PutUnit(new Position(10, 19), FourthCampUnits[0]);
+            PutUnit(new Position(11, 20), FourthCampUnits[1]);
+            PutUnit(new Position(12, 20), FourthCampUnits[2]);
+            PutUnit(new Position(13, 19), FourthCampUnits[3]);
+            PutUnit(new Position(19, 9), FirstCampUnits[1]);
+            PutUnit(new Position(20, 11), FirstCampUnits[0]);
+            PutUnit(new Position(19, 13), FirstCampUnits[2]);
 
             // 仇恨设置
             IsActivated['a'] = false;

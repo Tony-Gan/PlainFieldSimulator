@@ -1,4 +1,5 @@
-﻿using System;
+﻿using UnityEngine;
+using System;
 using System.Collections.Generic;
 using PlainFieldSimulator.Equipments.Accessories;
 using PlainFieldSimulator.Equipments.Armors;
@@ -8,8 +9,6 @@ using PlainFieldSimulator.Exceptions;
 using PlainFieldSimulator.Occupations;
 using PlainFieldSimulator.Abilities;
 using PlainFieldSimulator.Missions;
-using UnityEngine.Animations;
-using Unity.VisualScripting;
 
 namespace PlainFieldSimulator.Units
 {
@@ -340,7 +339,7 @@ namespace PlainFieldSimulator.Units
             {
                 throw new WeaponListFull("Weapon list full.");
             }
-            if (Occupation.AvailableWeapons.Contains(weapon.WeaponType) && Occupation.OccupationLevel >= weapon.Level)
+            if (Occupation.OccupationLevel >= weapon.Level)
             {
                 foreach (Weapon w in Weapons)
                 {
@@ -350,14 +349,10 @@ namespace PlainFieldSimulator.Units
                     }
                 }
                 Weapons.Add(weapon);
-                if (Weapon.FormalName == "No Weapon")
+                if (Weapon.FormalName == "No Weapon" && Occupation.AvailableWeapons.Contains(weapon.WeaponType))
                 {
                     Weapon = weapon;
                 }
-            }
-            else
-            {
-                throw new EquipmentNotAvailable($"{weapon.WeaponType} is not available for this unit.");
             }
         }
 
@@ -368,7 +363,7 @@ namespace PlainFieldSimulator.Units
             {
                 Weapons.Remove(weapon);
             }
-            if (Weapon == weapon)
+            if (Weapon.Equals(weapon))
             {
                 Weapon = new NoWeapon();
             }
@@ -391,7 +386,6 @@ namespace PlainFieldSimulator.Units
                         throw new EquipmentNotAvailable($"{weapon.WeaponType} is not available for this unit.");
                     }
                 }
-                throw new NoWeaponFound($"{w.FormalName} not found in weapon list.");
             }
         }
         
@@ -853,7 +847,7 @@ namespace PlainFieldSimulator.Units
             {
                 throw new MaximumLevelApproached($"{Name} has approached the max level of current occupation.");
             }
-            Random dice = new();
+            System.Random dice = new();
             double r1 = dice.NextDouble();
             double r2 = dice.NextDouble();
             double r3 = dice.NextDouble();
@@ -954,8 +948,9 @@ namespace PlainFieldSimulator.Units
          */
         public void StageUp(Occupation occupation)
         {
-            if ((occupation.OccupationLevel == 2 && Level == 10) || (occupation.OccupationLevel == 3 && Level == 20) || (occupation.OccupationLevel == 4 && Level == 30) && (occupation.GenderLimitation == 0 || occupation.GenderLimitation == Gender) && Occupation.FormalName != "Villager")
+            if ((occupation.OccupationLevel == 2 && Level == 10) || (occupation.OccupationLevel == 3 && Level == 20) || (occupation.OccupationLevel == 4 && Level == 30) && (occupation.GenderLimitation == 0 || occupation.GenderLimitation == Gender) && Occupation.UpperOccupation.Contains(occupation.FormalName))
             {
+                Occupation = occupation;
                 bool flag = false;
                 if (occupation.AvailableWeapons.Contains(Weapon.WeaponType)) 
                 {
@@ -977,7 +972,6 @@ namespace PlainFieldSimulator.Units
                 {
                     Armor = new NoArmor();
                 }
-                Occupation = occupation;
                 AdjustMaxHp(Occupation.GetHpAddOn());
                 AdjustAtk(Occupation.GetAtkAddOn());
                 AdjustSatk(Occupation.GetSatkAddOn());
@@ -994,7 +988,7 @@ namespace PlainFieldSimulator.Units
             {
                 throw new OccupationNotAvailable($"{Occupation.GetType().Name} is not able to stage up to {occupation.GetType().Name}.");
             }
-            else if (occupation.GenderLimitation == 0 || occupation.GenderLimitation == Gender)
+            else if (occupation.GenderLimitation != 0 && occupation.GenderLimitation != Gender)
             {
                 throw new OccupationNotAvailable($"{occupation.GetType().Name} is gender restricted.");
             }

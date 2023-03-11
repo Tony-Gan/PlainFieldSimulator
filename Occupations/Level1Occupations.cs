@@ -422,7 +422,22 @@ namespace PlainFieldSimulator.Occupations
                     { "tech", 0.1 },
                 },
                 1,
-                new List<string>(),
+                new List<string>
+                {
+                    "Swordman",
+                    "Lancer",
+                    "Axeman",
+                    "Shortbow Man",
+                    "Longbow Man",
+                    "Armorman",
+                    "Magic Blader",
+                    "Thief",
+                    "Cavalier",
+                    "Crossbow Rider",
+                    "Bishop",
+                    "Wizard",
+                    "Pegasus Rider"
+                },
                 new List<string>(),
                 new List<string>()
                 {
