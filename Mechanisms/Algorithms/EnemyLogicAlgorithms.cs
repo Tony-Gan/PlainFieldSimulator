@@ -172,7 +172,11 @@ namespace PlainFieldSimulator.Algorithms
             Position p = unit.Position;
             foreach (Position pos in availableMovement)
             {
-                int dist = Mission.CalculateDistanceBetweenPositions(unit.Position, pos);
+                int dist = 0;
+                foreach (Unit u in nearestThreeUnits)
+                {
+                    dist += Mission.CalculateDistanceBetweenPositions(u.Position, pos);
+                } 
                 if (dist > longestDistance)
                 {
                     longestDistance = dist;

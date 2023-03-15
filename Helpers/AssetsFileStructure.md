@@ -1,0 +1,29 @@
+- Animations - 动画
+	- Characters - 人物动画
+		- MainCharacters - 主要人物动画
+		- OtherCharacters - 量产人物动画
+	- MapDecorations - 场景装饰动画
+- ArtAssets - 美术资源
+	- LimeZu - 多用于场景和装饰
+	- MiniWorld - 用于场景
+	- RuneWork - 用于道具
+- Images - 图片
+- Mechanisms - 游戏机制
+	- Abilities - 角色技能
+	- Algorithms - 算法
+	- BattleField - 场景方块属性
+	- Equipments - 装备
+	- Exceptions - 异常
+	- Missions - 关卡
+	- Models - 角色模板
+	- Occupations - 职业
+	- Units - 单位
+- Scenes - Unity场景文件
+- Scripts - Unity脚本文件
+	- Character - 针对人物的脚本
+	- Cell - 针对场景的脚本
+	- General - 通用脚本
+- Settings - 各类设置
+	- InputSystem - 输入设置
+- Tilemaps - 存储瓦片图
+- Helpers - 一些帮助文档
